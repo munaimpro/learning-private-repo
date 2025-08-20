@@ -5,6 +5,11 @@
         "appearanceTools" : true
     },
     "styles" : {
+        "blocks" : {
+            "core/post-comments-form" : {
+                "css" : "& textarea{border-radius:8px}"
+            }
+        },
         "color" : {
             "text" : "#333333",
             "background" : "#ffffff"
@@ -28,6 +33,14 @@
                     "color" : "#333333",
                     "fontWeight" : "600",
                     "textDecoration" : "none"
+                }
+            },
+            "button" : {
+                "border" : {
+                    "radius" : "8px"
+                },
+                "typography" : {
+                    "fontWeight" : "600"
                 }
             }
         },
