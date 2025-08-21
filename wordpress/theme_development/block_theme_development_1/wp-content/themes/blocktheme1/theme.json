@@ -2,7 +2,42 @@
     "$Schema" : "https://schemas.wp.org/wp/6.7/theme.json",
     "version" : "1.0.0",
     "settings": {
-        "appearanceTools" : true
+        "appearanceTools" : true,
+        "color" : {
+            "defaultPalette" : false,
+            "custom" : true,
+            "link" : true,
+            "background" : true,
+            "palette" : [
+                {
+                    "slug" : "text-color",
+                    "color" : "#333333",
+                    "name" : "Text Color"
+                },
+                {
+                    "slug" : "background-color",
+                    "color" : "#b9e6d43d",
+                    "name" : "Background Color"
+                },
+                {
+                    "slug" : "border-color",
+                    "color" : "#7bdcb5",
+                    "name" : "Border Color"
+                }
+            ]
+        },
+        "blocks" : {
+            "core/post-date" : {
+                "color" : {
+                    "background" : false
+                }
+            },
+            "core/post-excerpt" : {
+                "color" : {
+                    "background" : false
+                }
+            }
+        }
     },
     "styles" : {
         "blocks" : {
