@@ -8,7 +8,13 @@
         "blocks" : {
             "core/post-comments-form" : {
                 "css" : "& textarea{border-radius:8px}"
-            }
+            },
+            "core/search" : {
+                "css" :"& .wp-block-search__input{border-radius:8px}"
+            },
+            "core/post": {
+				"css": "& li{margin-top: 0.5rem; color:red}"
+			}
         },
         "color" : {
             "text" : "#333333",
