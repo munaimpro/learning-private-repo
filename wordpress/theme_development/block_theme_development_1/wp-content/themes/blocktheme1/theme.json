@@ -24,16 +24,47 @@
                     "color" : "#7bdcb5",
                     "name" : "Border Color"
                 }
+            ],
+            "defaultGradient" : true,
+            "customGradient" : true,
+            "gradients" : [
+                {
+                    "slug" : "header-gradient",
+                    "gradient" : "linear-gradient(180deg, #7ADCB4 0%, #00D082 100%)",
+                    "name" : "Header Gradient"
+                },
+                {
+                    "slug" : "dark-gradient",
+                    "gradient" : "linear-gradient(180deg, #333333 0%, #000000 100%)",
+                    "name" : "Dark Gradient"
+                },
+                {
+                    "slug" : "blue-gradient",
+                    "gradient" : "linear-gradient(145deg, #121212 0%, #4695DD 100%)",
+                    "name" : "Blue Gradient"
+                }
             ]
         },
         "blocks" : {
             "core/post-date" : {
                 "color" : {
-                    "background" : false
+                    "background" : true,
+                    "defaultGradients" : false,
+                    "customGradient" : false,
+                    "gradients" : []
                 }
             },
             "core/post-excerpt" : {
                 "color" : {
+                    "background" : false
+                }
+            },
+            "core/column" : {
+                "color" : {
+                    "defaultGradients" : false,
+                    "customGradient" : false,
+                    "gradients" : [],
+                    "custom" : false,
                     "background" : false
                 }
             }
