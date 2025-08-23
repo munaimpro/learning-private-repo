@@ -3,6 +3,14 @@
     "version" : "1.0.0",
     "settings": {
         "appearanceTools" : true,
+        "spacing": {
+            "margin": false,
+            "padding": false,
+            "blockGap": false
+        },
+        "dimensions": {
+            "minHeight": false
+        },
         "typography": {
             "letterSpacing": false,
             "textTransform": false,
