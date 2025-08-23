@@ -3,6 +3,44 @@
     "version" : "1.0.0",
     "settings": {
         "appearanceTools" : true,
+        "typography": {
+            "letterSpacing": false,
+            "textTransform": false,
+            "fontWeight": false,
+            "fontStyle": false,
+            "textDecoration": false,
+            "defaultFontSizes" : false,
+            "fontSizes" : [
+                {
+                    "slug":"small",
+                    "size": "12px",
+                    "name": "Small Font Size"
+                },
+                {
+                    "name": "Medium Font Size",
+                    "slug": "medium",
+                    "size":"16px"
+                },
+                {
+                    "slug": "large",
+                    "name":"Large Font Size",
+                    "size":"18px"
+                }
+            ],
+            "customFontSize": false,
+            "fontFamilies": [
+                {
+                    "name": "Roboto",
+                    "slug": "roboto",
+                    "fontFamily":"Sans-Serif, 'Roboto'"
+                },
+                {
+                    "name": "Monospace",
+                    "slug": "monospace",
+                    "fontFamily":"'Monospace', Sans-Serif"
+                }
+            ]
+        },
         "color" : {
             "defaultPalette" : false,
             "custom" : true,
@@ -51,7 +89,10 @@
                     "background" : true,
                     "defaultGradients" : false,
                     "customGradient" : false,
-                    "gradients" : []
+                    "gradients" : false
+                },
+                "typography": {
+                    "fontSizes": []
                 }
             },
             "core/post-excerpt" : {
@@ -67,10 +108,16 @@
                     "custom" : false,
                     "background" : false
                 }
+            },
+            "core/search": {
+                "typography": {
+                    "lineHeight": false
+                }
             }
         }
     },
     "styles" : {
+        "css": ".post-body{box-shadow: 0 0 2px #000000;} .sidebar{border: 1px solid #ddd;}",
         "blocks" : {
             "core/post-comments-form" : {
                 "css" : "& textarea{border-radius:8px}"
