@@ -5,15 +5,15 @@ use Illuminate\Support\Facades\Route;
 
 
 // Route for get API
-Route::get('/users/get', ['getUsers', UserController::class])->middleware('TokenVerificationMiddleware');
+Route::get('users/get', [UserController::class, 'getUsers']);
 
 // Route for post API
-Route::post('users/post', ['insertUser', UserController::class])->middleware('TokenVerificationMiddleware');
+Route::post('users/post', [UserController::class, 'insertUser'])->middleware('TokenVerificationMiddleware');
 
 // Route for view user list
 Route::view('/', 'home');
 
 // Auth Routes
-Route::post('signup', ['userSignup', UserController::class]);
-Route::post('signin', ['userSignin', UserController::class]);
+Route::post('users/signup', [UserController::class, 'userSignup']);
+Route::post('users/signin', [UserController::class, 'userSignin']);
 

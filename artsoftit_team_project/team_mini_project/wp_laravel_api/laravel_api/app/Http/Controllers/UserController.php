@@ -82,7 +82,7 @@ class UserController extends Controller
             /**
              * Create a new token for the authenticated user and pass to cookie and frontend
              */
-            $token = JWTToken::CreateToken($user->id, $user->name, $user->phone);
+            $token = JWTToken::CreateToken($user->id, $user->name, $user->phone, $user->email);
             return response()->json(['status' => 'success', 'message' => 'আপনি সফলভাবে লগইন করেছেন', 'signin_token' => $token, 'redirect' => 'dashboard'])->cookie(
                 'signin_token', // 1. Token name
                 $token,       // 2. Token value
@@ -126,7 +126,31 @@ class UserController extends Controller
 
     
     // Function to insert user API
-    function insertUser (): void {
+    function insertUser (Request $request) {
+        // Validation process
+        $validatedData = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|max:100|unique:user_infos,email',
+            'phone' => 'required|string|max:50',
+            'image' => 'required|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
+        ]);
 
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = $request->file('image')->store('uploads', 'public');
+        }
+
+        // Insert user data
+        $result = User::create($validatedData);
+
+        if ($result) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User Data Inserted',
+            ]);
+        } else {
+
+        }
+        
     }
 }

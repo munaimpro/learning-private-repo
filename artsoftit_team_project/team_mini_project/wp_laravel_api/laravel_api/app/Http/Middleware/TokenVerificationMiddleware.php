@@ -27,9 +27,9 @@ class TokenVerificationMiddleware
 
             if ($result !== "Unauthorized") {
                 // Set headers for later use
-                $request->headers->set('name', $result->userFullName);
-                $request->headers->set('phone', $result->userMobile);
-                $request->headers->set('email', $result->userMobile);
+                $request->headers->set('name', $result->name);
+                $request->headers->set('phone', $result->phone);
+                $request->headers->set('email', $result->email);
                 $request->headers->set('userId', $result->userId);
 
                 return $next($request);

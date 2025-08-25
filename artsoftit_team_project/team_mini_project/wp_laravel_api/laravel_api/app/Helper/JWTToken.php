@@ -10,7 +10,7 @@ class JWTToken{
     
     /* Method for create token */
 
-    static function CreateToken($userId, $name, $phone):string{
+    static function CreateToken($userId, $name, $phone, $email):string{
         
         $key = base64_decode(env('JWT_SECRET'));
 
@@ -23,6 +23,7 @@ class JWTToken{
             */
             'name' => $name,
             'phone' => $phone,
+            'email' => $email,
             'userId' => $userId,
         ];
 
@@ -68,3 +69,4 @@ class JWTToken{
         }
     }
 }
+
