@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use App\Helper\JWTToken;
+use App\Models\ApiUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -115,7 +116,7 @@ class UserController extends Controller
     // Function to get all users
     function getUsers (): JsonResponse {
         // Get all users
-        $users = User::all();
+        $users = ApiUser::all();
 
         // Return user data to frontend
         return response()->json([
@@ -127,30 +128,35 @@ class UserController extends Controller
     
     // Function to insert user API
     function insertUser (Request $request) {
-        // Validation process
-        $validatedData = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|max:100|unique:user_infos,email',
-            'phone' => 'required|string|max:50',
-            'image' => 'required|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
-        ]);
+        try {
+            // Validation process
+            $validatedData = $request->validate([
+                'name'  => 'required|string|max:255',
+                'email' => 'required|email|max:100|unique:api_users,email',
+                'phone' => 'required|string|max:50',
+                'image' => 'required|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
+            ]);
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $validatedData['image'] = $request->file('image')->store('uploads', 'public');
-        }
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $validatedData['image'] = $request->file('image')->store('uploads', 'public');
+            }
 
-        // Insert user data
-        $result = User::create($validatedData);
+            // Insert user data
+            $result = ApiUser::create($validatedData);
 
-        if ($result) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'User Data Inserted',
             ]);
-        } else {
 
+        } catch(Exception $error) {
+             /* If an unexpected exception occurs, return a JSON response indicating failure */
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'দুঃখিত! দয়া করে আবার চেষ্টা করুন। অথবা সাপোর্টে যোগাযোগ করুন'. $error->getMessage(),
+                'exception_error' => $error->getMessage()
+            ]);
         }
-        
     }
 }
