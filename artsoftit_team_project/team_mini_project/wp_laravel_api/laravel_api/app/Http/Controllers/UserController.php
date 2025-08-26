@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
-use App\Helper\JWTToken;
 use App\Models\ApiUser;
+use App\Helper\JWTToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -126,8 +127,8 @@ class UserController extends Controller
     }
 
     
-    // Function to insert user API
-    function insertUser (Request $request) {
+    // Function to insert user
+    function insertUser (Request $request): JsonResponse {
         try {
             // Validation process
             $validatedData = $request->validate([
@@ -148,6 +149,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'User Data Inserted',
+                'data' => $result
             ]);
 
         } catch(Exception $error) {
@@ -161,8 +163,8 @@ class UserController extends Controller
     }
 
 
-    // Function to get single user API
-    function getSingleUser ($id) {
+    // Function to get single user
+    function getSingleUser ($id): JsonResponse {
         try {
             // Fetch single user by id
             $user = ApiUser::find($id);
@@ -173,6 +175,77 @@ class UserController extends Controller
                 'data' => $user,
             ]);
         } catch (Exception $error) {
+            /* If an unexpected exception occurs, return a JSON response indicating failure */
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'দুঃখিত! দয়া করে আবার চেষ্টা করুন। অথবা সাপোর্টে যোগাযোগ করুন'. $error->getMessage(),
+                'exception_error' => $error->getMessage()
+            ]);
+        }
+    }
+
+
+    // Function to update single user
+    function updateSingleUser (Request $request, $id) {
+        try {
+            $user = ApiUser::findOrFail($id);
+            
+            // Backend validation process
+            $validatedData = $request->validate([
+                'name'  => 'required|string|max:255',
+                'email' => 'required|email|max:100',
+                'phone' => 'required|string|max:50',
+                'image' => 'image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
+            ]);
+
+            // Existing image delete process
+
+            // Upload image handling
+            if ($request->hasFile('image')) {
+                $validatedData['image'] = $request->file('image')->store('uploads', 'public');
+            }
+
+            // Data update process
+            $result = $user->update($validatedData);
+
+            // Return response for the frontend
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User details updated',
+                'data' => $user
+            ]);
+        
+        }   catch(Exception $error) {
+            /* If an unexpected exception occurs, return a JSON response indicating failure */
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'দুঃখিত! দয়া করে আবার চেষ্টা করুন। অথবা সাপোর্টে যোগাযোগ করুন'. $error->getMessage(),
+                'exception_error' => $error->getMessage()
+            ]);
+        }
+    }
+
+
+    // Function to delete single user
+    function deleteSingleUser (Request $request, $id) {
+        try {
+            $user = ApiUser::findOrFail($id);
+
+            // Delete existing image if has
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            // Data delete process
+            $result = $user->delete();
+
+            // Return response for the frontend
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User successfully deleted',
+                'data' => $user
+            ]);
+        } catch(Exception $error) {
             /* If an unexpected exception occurs, return a JSON response indicating failure */
             return response()->json([
                 'status' => 'failed',

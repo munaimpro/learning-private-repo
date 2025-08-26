@@ -17,7 +17,7 @@ Route::get('user/get/{id}', [UserController::class, 'getSingleUser']);
 Route::post('user/put/{id}', [UserController::class, 'updateSingleUser'])->middleware('TokenVerificationMiddleware');
 
 // Route for delete API
-Route::post('user/delete/{id}', [UserController::class, 'deleteSingleUser'])->middleware('TokenVerificationMiddleware');
+Route::delete('user/delete/{id}', [UserController::class, 'deleteSingleUser'])->middleware('TokenVerificationMiddleware');
 
 // Auth Routes
 Route::post('users/signup', [UserController::class, 'userSignup']);

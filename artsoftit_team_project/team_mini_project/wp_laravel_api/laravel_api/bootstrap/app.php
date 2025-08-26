@@ -12,8 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens([
-            'users/post',
             'users/signin',
+            'user/post',
+            'user/put/*',
+            'user/delete/*',
         ]);
     
         $middleware->alias([
