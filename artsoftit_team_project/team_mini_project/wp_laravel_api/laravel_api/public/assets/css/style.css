@@ -1,0 +1,512 @@
+/*===============================================
+Bangla Google Fonts
+================================================*/
+@font-face {
+  font-family: 'Tiro Bangla';
+  src: url('/fonts/TiroBangla-Regular.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*===============================================
+General Styles
+================================================*/
+:root {
+    --primary-color: #4a3aff;
+    --secondary-color: #28cc74;
+    --text-color: #222222;
+    --background-color: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+html, body {
+    height: 100%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/*===============================================
+Body Styles
+================================================*/
+body {
+    color: var(--text-color);
+    font-family: 'Tiro Bangla', 'poppins', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+a {
+    text-decoration: none;
+    color: #4a3aff;
+}
+
+a:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.form-control{
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: .85rem 1.15rem;
+    font-size: 1rem;
+    width: 100%;
+    box-shadow: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border: 2.5px solid #4a3aff;
+    /* border: 2px solid #86b7fe; */
+    /* border: 2px solid var(--text-color); */
+    box-shadow: none !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: .9rem .7rem !important;
+}
+
+.btn-primary:hover {
+    background-color: #382df5;
+}
+
+.btn-success {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: .9rem .7rem !important;
+}
+
+.btn-success:hover {
+    background-color: #22b163;
+}
+
+
+/*===============================================
+SignUp and Login Page Styles
+================================================*/
+.signup-signin-wrapper {
+    background-color: var(--background-color);
+    border-radius: 16px !important;
+    max-width: 500px;
+    margin: 2rem auto;
+    height: fit-content;
+}
+
+.logo {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.logo span, .dashboard-logo span {
+    color: var(--secondary-color);
+}
+
+.logo a:hover {
+    background-color: transparent;
+}
+
+.signup-form-title, .signin-form-title {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.signup-signin-wrapper label {
+    color: var(--text-color);
+}
+
+.signin-link {
+    font-size: 0.95rem;
+}
+
+a {
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.signup-form-title, .name-group, .email-group {
+    transition: 1s ease height;
+    height: 0;
+}
+
+/* Thin and modern popup */
+.swal2-popup.thin-toast {
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  font-size: 14px;
+  font-weight: 500;
+  min-height: auto;
+  width: auto;
+}
+
+/* Success-style green timer progress bar */
+.swal2-timer-progress-bar.custom-timer-bar {
+  background: #28a745 !important; /* Bootstrap green */
+}
+
+@media (min-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .signup-btn {
+        font-size: 1.1rem;
+    }
+
+    .form-label, .form-control {
+        font-size: 1.05rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .wrapper {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+}
+
+
+/*===============================================
+Dashboard Page Styles
+================================================*/
+.dashboard-body {
+    background-color: #b5d5f612;
+}
+
+.dashboard-header {
+    height: 60px;
+    background-color: #4a3aff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+.dashboard-sidebar {
+    width: 200px;
+    background-color: #ffffff;
+    color: white;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 1;
+}
+
+.dashboard-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333333;
+    padding: 12px 20px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    border-bottom-right-radius: 2rem;
+    border-top-right-radius: 2rem;
+}
+
+.dashboard-sidebar a:first-child {
+    margin-top: 65px;
+}
+
+/* Sidebar Toggle for Mobile */
+.sidebar-hidden {
+    transform: translateX(-100%);
+}
+
+/* Menu Toggle fo Mobile */
+.menu-toggle {
+    background: none;
+    border: none;
+    color: #333333;
+    font-size: 1.5rem;
+}
+
+#dashboard-menu-active, .dashboard-sidebar a:hover {
+    background-color: #28cc743b;
+    /* background-color: #25AE88; */
+}
+
+.dashboard-logo a {
+    color: var(--primary-color);
+    display: block;
+    text-align: center;
+}
+
+.dashboard-logo a:hover {
+    background-color: transparent;
+}
+
+.main-content {
+    margin-top: 60px;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-wrapper {
+    padding: 40px;
+}
+
+.dashboard-page-block-content {
+    padding: 2rem;
+    background: var(--background-color);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.dashboard-block-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-block-subtitle {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.exam-btn {
+    background-color: #28cc74;
+    color: white;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.exam-btn:hover {
+    background-color: #22b163;
+}
+
+.new-exam-btn {
+    background-color: #4a3aff;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+
+.new-exam-btn:hover {
+    background-color: #382df5;
+}
+
+.dashboard-footer p {
+    font-size: 1rem;
+    background-color: var(--background-color);
+}
+
+@media (min-width: 768px) {
+    .dashboard-header, .dashboard-wrapper, .dashboard-footer {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .new-exam-btn,
+    .exam-btn {
+        font-size: 1.1rem;
+    }
+
+    p { font-size: 1.1rem; }
+
+    .sidebar-hidden + .main-content .dashboard-header,
+    .sidebar-hidden + .main-content .dashboard-wrapper,
+    .sidebar-hidden + .main-content .dashboard-footer {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+
+
+
+/*===============================================
+Exam Setup Page Styles
+================================================*/
+.dashboard-input-form {
+    padding: 20px;
+}
+
+.dashboard-input-form .form-label  {
+    font-size: 20px;
+    color: #34895b;
+    font-weight: 600;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0;
+    max-width: 300px;
+    justify-content: space-between;
+}
+
+.form-check label {
+    font-size: 18px;
+}
+
+.form-check input[type="checkbox"]:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check input[type="checkbox"] {
+    box-shadow: none !important;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+
+
+/*===============================================
+Exam Setup Page Styles
+================================================*/
+.marks-allocation-container {
+    background-color: #fff;
+    padding: 1rem 0 3rem;
+    width: 100%;
+}
+
+.group-name-heading {
+    color: #28a745;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.marks-table {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(4, 1fr); /* Subject column wider */
+    gap: 10px; /* Row and column gap */
+    align-items: center;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.marks-table-header {
+    font-weight: bold;
+    color: #333; /* Darker text for headers */
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee; /* Light separator line */
+    text-align: center; /* Center header text */
+}
+
+.marks-table-cell {
+    padding: 5px 0;
+    display: flex;
+    gap: inherit;
+    justify-content: center;
+}
+
+.subject-name-cell {
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 600;
+}
+
+.marks-input {
+    display: inline;
+    width: 60px; /* Fixed width for mark input fields */
+    padding: 5px;
+    text-align: center; /* Center text inside inputs */
+    -moz-appearance: textfield; /* Hide spinner for number inputs in Firefox */
+}
+
+/* Hide number input spinners for Webkit (Chrome, Safari, Edge) */
+.marks-input::-webkit-outer-spin-button,
+.marks-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.student-marks-table{
+    grid-template-columns: 1.5fr repeat(5, 1fr);
+}
+
+.btn-upload {
+    background-color: #ff3366; /* Pink-like color */
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-upload:hover {
+    background-color: #e6004c;
+    color: white;
+}
+
+.floating-button {
+    width: 50px;
+    height: 50px;
+    background-color: var(--secondary-color);
+    display: flex;
+    border: none;
+    border-radius: 50%;
+    font-size: 25px;
+    color: var(--text-color);
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+    position: fixed;
+    right: 50px;
+    bottom: 50px;
+    z-index: 999;
+}
+
+@media (max-width: 768px) {
+    .student-marks-table {
+        overflow-x: scroll;
+    }
+    .marks-input {
+        width: 175px !important;
+    }
+    .floating-button {
+        bottom: 80px;
+        right: 25px;
+    }
+}
+
