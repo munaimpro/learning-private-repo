@@ -159,4 +159,26 @@ class UserController extends Controller
             ]);
         }
     }
+
+
+    // Function to get single user API
+    function getSingleUser ($id) {
+        try {
+            // Fetch single user by id
+            $user = ApiUser::find($id);
+
+            // Return user data to frontend
+            return response()->json([
+                'status' => 'success',
+                'data' => $user,
+            ]);
+        } catch (Exception $error) {
+            /* If an unexpected exception occurs, return a JSON response indicating failure */
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'দুঃখিত! দয়া করে আবার চেষ্টা করুন। অথবা সাপোর্টে যোগাযোগ করুন'. $error->getMessage(),
+                'exception_error' => $error->getMessage()
+            ]);
+        }
+    }
 }
