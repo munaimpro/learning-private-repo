@@ -80,7 +80,7 @@
                     <tr>
                         <td>${user.name}</td>
                         <td>${user.email}</td>
-                        <td>${user.image}</td>
+                        <td><img width="80px" height="80px" src="{{ url('/') }}/storage/${user.image}" alt="profile"></td>
                         <td>${user.phone}</td>
                     </tr>
                     `;
