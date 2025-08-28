@@ -46,7 +46,7 @@ function get_laravel_api_users () {
 
 
 // Function to render the external-users admin page
-function render_admin_page () {
+function render_admin_page (): void {
     $users = get_laravel_api_users();
 
     ?>
@@ -98,5 +98,58 @@ function render_admin_page () {
     <?php
 }
 
+
+// Register shortcode to display API users on the frontend
+add_shortcode('laravel-api-users', 'frontend_users_table_shortcode');
+function frontend_users_table_shortcode (): bool|string {
+    // Get API users from Laravel API
+    $users = get_laravel_api_users();
+
+    // Create table structure rendered with data
+    ob_start();
+    ?>
+    <table>
+        <thead style="padding: 10px 20px; border-bottom: 1px solid #ddd;">
+            <tr>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">ID</th>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">Profile</th>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">Name</th>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">Email</th>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">Phone</th>
+                <th style="padding: 10px 20px; border-bottom: 1px solid #ddd;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                if ($users){
+                    foreach ($users as $user){
+                        echo "<tr>
+                                <td style='padding:10px 20px; border-bottom: 1px solid #ddd'>" . esc_html($user['id']) . "</td>"
+                                .
+                                "<td style='padding:10px; border-bottom: 1px solid #ddd'>". "<img width='50px' height='50px' src='http://127.0.0.1:8000/storage/". $user['image'] ."' />" ."</td>"
+                                .
+                                "<td style='padding:10px; border-bottom: 1px solid #ddd'>". esc_html($user['name']) ."</td>"
+                                .
+                                "<td style='padding:10px; border-bottom: 1px solid #ddd'>". esc_html($user['email']) ."</td>"
+                                .
+                                "<td style='padding:10px; border-bottom: 1px solid #ddd'>". esc_html($user['phone']) ."</td>"
+                                .
+                                "<td style='padding:10px; border-bottom: 1px solid #ddd'>
+                                    <a href='?page=external-users&action=edit&id='" . $user['id'] . "class='button'>Edit</a>
+                                    <a href='?page=external-users&action=delete&id='" . $user['id'] . "class='button delete-user'>Delete</a>
+                                </td>"
+                                .
+                            "</tr>";
+                    }
+                } else {
+                    echo "<tr>
+                            <td colspan='5'>No users found.</td>
+                        </tr>";
+                } ?>
+        </tbody>
+    </table>
+    <?php
+    return ob_get_clean(); // Return buffered content
+}
 
 ?>
