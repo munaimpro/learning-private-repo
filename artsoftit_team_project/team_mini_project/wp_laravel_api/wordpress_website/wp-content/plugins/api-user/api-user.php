@@ -11,6 +11,17 @@
 */
 
 
+// Function to enque scripts
+add_action('admin_enqueue_scripts', 'api_user_enqueue_scripts');
+function api_user_enqueue_scripts () {
+    // Axios CDN enque
+    wp_enqueue_script('axios_cdn', 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js',[], '1.0.0', true);
+
+    // Custom JS enqueue
+    wp_enqueue_script('custom_js', plugin_dir_url(__FILE__).'assets/js/api-user.js',['axios_cdn'], '1.0.0', true);
+}
+
+
 // Function to add api user custom admin page on plugin activate
 add_action('admin_menu', 'register_admin_api_user_page');
 function register_admin_api_user_page () {
@@ -26,8 +37,8 @@ function register_admin_api_user_page () {
 }
 
 
-// Function to get Laravel API user
-function get_laravel_api_users () {
+// Function to get Laravel API all users
+function get_laravel_api_users (): mixed {
     $response = wp_remote_get('http://127.0.0.1:8000/users/get');
     
     if (is_wp_error($response)) {
@@ -45,12 +56,68 @@ function get_laravel_api_users () {
 }
 
 
+// Function to get single Laravel API single user
+function get_laravel_api_single_user ($user_id) {
+    $response = wp_remote_get('http://127.0.0.1:8000/user/get/'.$user_id);
+
+    if (is_wp_error($response)) {
+        return false;
+    }
+
+    $data = json_decode(wp_remote_retrieve_body($response), true);
+
+    if (isset($data['data'])) {
+        return $data['data'];
+    }
+
+    return false;
+}
+
+
 // Function to render the external-users admin page
 function render_admin_page (): void {
     $users = get_laravel_api_users();
 
     ?>
         <div class="wrap">
+            <!-- Edit user details on click edit button -->
+        <?php
+            if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
+                $user_id = intval($_GET['id']);
+                $single_user = get_laravel_api_single_user($user_id);
+
+                if ($single_user) { ?>
+                    <div id="editUserForm" style="margin-bottom:20px;">
+                        <h1>Edit User</h1>
+                        <form action="" method="POST">
+                            <input type="hidden" id="editUserId" name="id" value="<?php echo esc_html($single_user['id']); ?>">
+                            <p>
+                                <label>Name:</label><br>
+                                <input type="text" id="editUserName" name="name" value="<?php echo esc_html($single_user['name'])?>">
+                            </p>
+                            <p>
+                                <label>Email:</label><br>
+                                <input type="email" id="editUserEmail" name="email" value="<?php echo esc_html($single_user['email']); ?>">
+                            </p>
+                            <p>
+                                <label>Phone:</label><br>
+                                <input type="text" id="editUserPhone" name="phone" value="<?php echo esc_html($single_user['phone']); ?>">
+                            </p>
+                            <p>
+                                <label>Profile Image:</label><br>
+                                <img id="editUserImagePreview" src="http://127.0.0.1:8000/storage/<?php echo esc_html($single_user['image']); ?>" alt="Preview" width="80"><br><br>
+                                <input type="file" id="editUserImage" name="image">
+                            </p>
+                            <p>
+                                <button type="submit" class="button button-primary">Update User</button>
+                                <button type="button" id="cancelEdit" class="button">Cancel</button>
+                            </p>
+                        </form>
+                    </div>
+        <?php   }
+            }
+        ?>
+
             <h1>API Users</h1>
             <!-- <form action="" method="POST">
                 <input type="submit" name="fetch_external_users" class="button button-primary" value="Fetch & Save Users">
@@ -81,10 +148,9 @@ function render_admin_page (): void {
                                 echo '<td>' . esc_html($user['email']) . '</td>';
                                 echo '<td>' . esc_html($user['phone']) . '</td>';
                                 echo '<td>
-                                        <a href="?page=external-users&action=edit&id=' . $user['id'] . '" class="button">Edit</a>
-                                        <a href="?page=external-users&action=delete&id=' . $user['id'] . '" class="button delete-user">Delete</a>
+                                        <a href="?page=api-users&action=edit&id=' . $user['id'] . '" class="button">Edit</a>
+                                        <a href="?page=api-users&action=delete&id=' . $user['id'] . '" class="button delete-user">Delete</a>
                                     </td>';
-                                echo '</tr>';
                             }
                         } else {
                             echo "<tr>
@@ -97,6 +163,20 @@ function render_admin_page (): void {
         </div>
     <?php
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Register shortcode to display API users on the frontend
