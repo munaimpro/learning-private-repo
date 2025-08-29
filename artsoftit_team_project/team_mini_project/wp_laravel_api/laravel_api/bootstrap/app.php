@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens([
-            'users/signin',
+            'user/signup',
+            'user/signin',
             'user/post',
             'user/put/*',
             'user/delete/*',

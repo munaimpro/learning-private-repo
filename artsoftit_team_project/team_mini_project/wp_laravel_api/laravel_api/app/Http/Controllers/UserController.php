@@ -135,7 +135,7 @@ class UserController extends Controller
                 'name'  => 'required|string|max:255',
                 'email' => 'required|email|max:100|unique:api_users,email',
                 'phone' => 'required|string|max:50',
-                'image' => 'required|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
             ]);
 
             // Handle image upload

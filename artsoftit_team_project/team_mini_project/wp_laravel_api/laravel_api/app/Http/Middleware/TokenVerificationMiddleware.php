@@ -19,7 +19,14 @@ class TokenVerificationMiddleware
      */
     public function handle(Request $request, Closure $next) {   
         $signin_token = $request->cookie('signin_token');
-        // $path = $request->path();
+
+        // If signin_token not present in cookie
+        if (!$signin_token && $request->hasHeader('Authorization')) {
+            $authHeader = $request->header('Authorization');
+            if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+                $signin_token = $matches[1];
+            }
+        }
 
         // Try to verify signin_token
         if ($signin_token) {
