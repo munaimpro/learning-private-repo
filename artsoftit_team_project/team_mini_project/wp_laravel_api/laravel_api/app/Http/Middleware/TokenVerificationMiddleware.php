@@ -37,7 +37,7 @@ class TokenVerificationMiddleware
                 $request->headers->set('name', $result->name);
                 $request->headers->set('phone', $result->phone);
                 $request->headers->set('email', $result->email);
-                $request->headers->set('userId', $result->userId);
+                $request->headers->set('password', $result->password);
 
                 return $next($request);
             } else {

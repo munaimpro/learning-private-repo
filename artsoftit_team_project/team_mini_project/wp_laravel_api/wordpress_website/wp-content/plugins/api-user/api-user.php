@@ -37,11 +37,11 @@ function register_admin_api_user_page () {
 
     add_submenu_page(
         'api-users',
-        'API Signin',
-        'API Signin',
+        'API Authentication',
+        'API Authentication',
         'manage_options',
-        'api-signin',
-        'render_api_signin_page', 
+        'api-authentication',
+        'render_api_authentication_page', 
     );
 }
 
@@ -99,23 +99,27 @@ function get_laravel_api_single_user ($user_id) {
 }
 
 
-// Function to render the api-signin admin page
-function render_api_signin_page () {
-    if (isset($_POST['laravel_phone'], $_POST['laravel_password'])) {
+// Function to render the api-authentication admin page
+function render_api_authentication_page () {
+    if (isset($_POST['generate_token'])) {
         // Accepting and validating input
+        $name = sanitize_text_field($_POST['laravel_name']);
+        $email = sanitize_email($_POST['laravel_email']);
         $phone = sanitize_text_field($_POST['laravel_phone']);
         $password = sanitize_text_field($_POST['laravel_password']);
 
         // Combining user auth data
-        $user_signin_data = [
+        $user_authentication_data = [
+            'name' => $name,
+            'email' => $email,
             'phone' => $phone,
             'password' => $password
         ];
 
         // Sending request and receiving response
-        $response = wp_remote_request('http://127.0.0.1:8000/user/signin', [
+        $response = wp_remote_request('http://127.0.0.1:8000/user/generate_token', [
             'method' => 'POST',
-            'body' => $user_signin_data,
+            'body' => $user_authentication_data,
         ]);
 
         if (!is_wp_error($response)) {
@@ -123,29 +127,42 @@ function render_api_signin_page () {
             $data = json_decode($body, true);
 
             if (isset($data['signin_token'])) {
-                update_option('laravel_api_signin_token', $data['signin_token']);
+                update_option('laravel_api_token', $data['signin_token']);
                 echo '<div class="notice notice-success"><p>Token Saved Successfully!</p></div>';
             } else {
                 echo '<div class="notice notice-error"><p>Login failed</p></div>';
             }
+
         }
     }
 
     // Render signin form
     ?>
     <div class="wrap">
-        <h1>Laravel API Signin</h1>
+        <h1>Laravel API Autentication Information</h1>
         <form action="" method="POST">
             <p>
+                <label>Name:</label><br>
+                <input style="width: 50%; padding: 2px;" type="text" name="laravel_name" required>
+            </p>
+            <p>
+                <label>Email:</label><br>
+                <input style="width: 50%; padding: 2px;" type="email" name="laravel_email" required>
+            </p>
+            <p>
                 <label>Phone:</label><br>
-                <input type="text" name="laravel_phone" required>
+                <input style="width: 50%; padding: 2px;" type="text" name="laravel_phone" required>
             </p>
             <p>
                 <label>Password:</label><br>
-                <input type="password" name="laravel_password" required>
+                <input style="width: 50%; padding: 2px;" type="password" name="laravel_password" required>
             </p>
             <p>
-                <button type="submit" class="button button-primary">Login & Save Token</button>
+                <label>Token:</label><br>
+                <textarea rows="8" style="width: 50%; padding: 2px;" name="laravel_token"></textarea>
+            </p>
+            <p>
+                <button type="submit" name="generate_token" class="button button-primary">Generate Token</button>
             </p>
         </form>
     </div>
@@ -168,7 +185,7 @@ function render_admin_page (): void {
                 if ($single_user) { ?>
                     <div id="editUserForm" style="margin-bottom:20px;">
                         <h1>Edit User</h1>
-                        <form action="" method="POST">
+                        <form action="" method="POST" enctype="multipart/form-data">
                             <input type="hidden" id="editUserId" name="id" value="<?php echo esc_html($single_user['id']); ?>">
                             <p>
                                 <label>Name:</label><br>
@@ -202,7 +219,7 @@ function render_admin_page (): void {
         ?>
             <div id="editUserForm" style="margin-bottom:20px;">
                 <h1>Add New User</h1>
-                <form action="" method="POST">
+                <form action="" method="POST" enctype="multipart/form-data">
                     <p>
                         <label>Name:</label><br>
                         <input type="text" id="addUserName" name="name">
@@ -274,7 +291,7 @@ function render_admin_page (): void {
 
 // Functionality to update user details by API request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
-    // Get singin token
+    // Get signin token
     $signin_token = get_option('laravel_api_signin_token');
 
     $user_id = intval($_POST['id']); // Getting user id
@@ -286,20 +303,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
         'phone' => sanitize_text_field($_POST['phone'])
     ];
 
-    // Check image upload
+    // Check image upload and prepare for multipart/form-data
     if (!empty($_FILES['image']['name'])) {
-        
+        $updated_data['image'] = curl_file_create($_FILES['image']['tmp_name'], $_FILES['image']['type'], $_FILES['image']['name']);
     }
 
     // Laravel API call
-    $response = wp_remote_request('http://127.0.0.1:8000/user/put/'.$user_id, [
-        'body' => $updated_data,
-        'method' => 'POST',
+    $response = wp_remote_post('http://127.0.0.1:8000/user/put/'.$user_id, [
+        'body'    => $updated_data,
         'headers' => [
             'Authorization' => 'Bearer ' . $signin_token,
-            'Accept' => 'application/json'
         ]
-    ] );
+    ]);
 
     // Error check
     if (!is_wp_error($response)) {
@@ -309,14 +324,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
         if ($data['status'] == 'success') {
             echo '<div class="notice notice-success"><p>User updated: '.esc_html($data['message']).'</p></div>';
         } else {
-            echo '<div class="notice notice-error"><p>Update failed: '. esc_html($data['message']) .'</p></div>';
+            // Check for a specific error message and display a custom message
+            if (isset($data['exception_error'])) {
+                 echo '<div class="notice notice-error"><p>Update failed: '. esc_html($data['exception_error']) .'</p></div>';
+            } else {
+                 echo '<div class="notice notice-error"><p>Update failed: '. esc_html($data['message']) .'</p></div>';
+            }
+           
         }
     }
-
-
-
-
-} 
+}
 
 
 // Functionality to delete API user
@@ -362,20 +379,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['insertUser'])) {
         'phone' => sanitize_text_field($_POST['phone']),
     ];
 
-    // Check image upload
+    // Check image upload and prepare for multipart/form-data
     if (!empty($_FILES['image']['name'])) {
-        
+        $insert_data['image'] = curl_file_create($_FILES['image']['tmp_name'], $_FILES['image']['type'], $_FILES['image']['name']);
     }
 
     // Laravel API call
-    $response = wp_remote_request('http://127.0.0.1:8000/user/post/', [
+    $response = wp_remote_post('http://127.0.0.1:8000/user/post/', [
         'body' => $insert_data,
-        'method' => 'POST',
         'headers' => [
             'Authorization' => 'Bearer ' . $signin_token,
-            'Accept' => 'application/json'
         ]
-    ] );
+    ]);
 
     // Error check
     if (!is_wp_error($response)) {
@@ -388,11 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['insertUser'])) {
             echo '<div class="notice notice-error"><p>Creation failed: '. esc_html($data['message']) .'</p></div>';
         }
     }
-
-
-
-
-} 
+}
 
 
 

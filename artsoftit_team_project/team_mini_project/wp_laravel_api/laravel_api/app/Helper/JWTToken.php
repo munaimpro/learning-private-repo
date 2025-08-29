@@ -10,7 +10,7 @@ class JWTToken{
     
     /* Method for create token */
 
-    static function CreateToken($userId, $name, $phone, $email):string{
+    static function CreateToken($name, $email, $phone, $password):string{
         
         $key = base64_decode(env('JWT_SECRET'));
 
@@ -24,7 +24,7 @@ class JWTToken{
             'name' => $name,
             'phone' => $phone,
             'email' => $email,
-            'userId' => $userId,
+            'password' => $password,
         ];
 
         return JWT::encode($payload, $key, 'HS512');

@@ -14,22 +14,43 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    // Function to handle user signup process
-    public function UserSignup(Request $request): JsonResponse {
+    // Function to handle user generate token process
+    public function userGenerateToken(Request $request): JsonResponse {
         try{
             /**
              * Input validation process for backend
              */
             $validatedData = $request->validate([
                 'name' => 'required|string|max:100',
-                'email' => 'nullable|unique:users,mail',
-                'phone' => 'required|string|min:8|max:15',
+                'email' => 'nullable',
+                'phone' => 'required|string|min:8|max:15|unique:users,phone',
+                'password' => 'required|string',
             ]);
+
+            /**
+             * Create a new token
+             */
+            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone'], $validatedData['password']);
+
+            // Attach token to the input data array
+            $validatedData['api_token'] = $token;
 
             /**
              * New user create in the users table
              */
-            User::create($validatedData);
+            User::updateOrCreate(
+                // Look user by phone
+                ['phone' => $validatedData['phone']],
+
+                // Update or insert new user data and generate API token
+                [
+                    'name' => $validatedData['name'],
+                    'email' => $validatedData['email'],
+                    'phone' => $validatedData['phone'],
+                    'password' => $validatedData['password'],
+                    'api_token' => $validatedData['api_token'],
+                ]
+            );
 
             /**
              * Return a JSON response indicating success
@@ -38,7 +59,8 @@ class UserController extends Controller
              */
             return response()->json([
                 'status' => 'success',
-                'message' => 'ধন্যবাদ, আপনার রেজিস্ট্রেশন সম্পন্ন হয়েছে'
+                'message' => 'New token generated',
+                'signin_token' => $token
             ]);
         } catch (ValidationException $error) {
             return response()->json([
@@ -135,7 +157,7 @@ class UserController extends Controller
                 'name'  => 'required|string|max:255',
                 'email' => 'required|email|max:100|unique:api_users,email',
                 'phone' => 'required|string|max:50',
-                'image' => 'nullable|image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
+                'image' => 'image|mimes:jpg,jpeg,png,jfif,gif|max:2048',
             ]);
 
             // Handle image upload

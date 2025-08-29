@@ -21,7 +21,7 @@ Route::post('user/put/{id}', [UserController::class, 'updateSingleUser'])->middl
 Route::delete('user/delete/{id}', [UserController::class, 'deleteSingleUser'])->middleware(TokenVerificationMiddleware::class); // DELETE API: http://127.0.0.1:8000/user/delete/id
 
 // Auth Routes
-Route::post('user/signup', [UserController::class, 'userSignup']); // REGISTER API: http://127.0.0.1:8000/user/signup
+Route::post('user/generate_token', [UserController::class, 'userGenerateToken']); // REGISTER API: http://127.0.0.1:8000/user/generate_token
 Route::post('user/signin', [UserController::class, 'userSignin']); // LOGIN API: http://127.0.0.1:8000/user/signin
 
 // Page Routes
