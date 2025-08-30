@@ -85,39 +85,27 @@ class UserController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function UserSignin(Request $request): JsonResponse {
+    public function userGetAuthDataWithToken($token): JsonResponse {
         try{
-            /**
-             * Input validation process for backend
-             */
-            $validatedData = $request->validate([
-                'phone' => ['required', 'string', 'max:255'],
-                'password' => ['required', 'string'],
-            ]);
+            /* Get user object by supplied token from wp */
+            $user = User::where('api_token', $token)->first();
 
-            /* Get user object by user provided mobile number */
-            $user = User::where('phone', $validatedData['phone'])->first();
+            // Check token validity
+            $token_verification_status = JWTToken::VerifyToken($token);
 
-            // Check if user exists AND password is correct
-            if(!$user || !Hash::check($validatedData['password'], $user->password)) {
-                return response()->json(['status' => 'failed', 'message' => 'দুঃখিত! আপনার তথ্য ম্যাচ করছে না, আবার চেষ্টা করুন']);
+            /* Check user exist with this token and fetch data by this token */
+            if ($user) {
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $user,
+                    'token_status' => $token_verification_status,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'No user found with this token',
+                ]);
             }
-
-            /**
-             * Create a new token for the authenticated user and pass to cookie and frontend
-             */
-            $token = JWTToken::CreateToken($user->id, $user->name, $user->phone, $user->email);
-            return response()->json(['status' => 'success', 'message' => 'আপনি সফলভাবে লগইন করেছেন', 'signin_token' => $token, 'redirect' => 'dashboard'])->cookie(
-                'signin_token', // 1. Token name
-                $token,       // 2. Token value
-                time()+60*60, // 3. Expiration date/time
-                '/',          // 4. Path - where the cookie is available ("/" = entire site)
-                '',           // 5. Domain - blank means current domain
-                true,         // 6. Secure - true = only send over HTTPS
-                true,         // 7. HttpOnly - true = JavaScript can't access this cookie
-                false,        // 8. Raw - false = URL encode the cookie value
-                'Strict'      // 9. SameSite - prevents cross-site requests ("Strict" is safest)
-            );
 
         } catch (ValidationException $error) {
             // Laravel's automatic handling for ValidationException usually returns 422

@@ -146,22 +146,55 @@ function render_api_authentication_page () {
             $option_table = $wpdb->prefix . 'options';
 
             $exist_token = $wpdb->get_results("SELECT * FROM $option_table WHERE option_name = 'laravel_api_token' LIMIT 1", ARRAY_A );
+
+            $api_token = $exist_token[0]['option_value']; // Store Api token
+                
+            // Fetch user data from laravel api matching the API token
+            $response = wp_remote_get('http://127.0.0.1:8000/user/get_auth_data/' . $api_token);
+            $body = wp_remote_retrieve_body($response);
+            $user_auth_data = json_decode($body);
             
             // Check if token existing or not in the wp_options table
-            if ($exist_token) {
-                $api_token = $exist_token[0]['option_value']; // Store Api token
-                
-                // Fetch user data from laravel api matching the API token
-                $response = wp_remote_get('http://127.0.0.1:8000/user/get_auth_data/' . $api_token);
-                $body = wp_remote_retrieve_body($response);
-                $data = json_decode($body);
+            if ($exist_token && !empty($user_auth_data)) {
+                // print_r($user_auth_data);
        ?>
-       
-                
+            <?php if ($user_auth_data->token_status !== 'Unauthorized') { ?>
+                <div class="notice notice-success">
+                    <p>Token Active</p>
+                </div>
+            <?php } else { ?>
+                <div class="notice notice-error">
+                    <p>Token Expired</p>
+                </div>
+            <?php } ?>
 
+            <p>
+                <label>Name:</label><br>
+                <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_name" value="<?php echo esc_html($user_auth_data->data->name); ?>" required>
+            </p>
+            <p>
+                <label>Email:</label><br>
+                <input style="width: 50%; padding: 2px 10px;" type="email" name="laravel_email" value="<?php echo esc_html($user_auth_data->data->email); ?>" required>
+            </p>
+            <p>
+                <label>Phone:</label><br>
+                <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_phone" value="<?php echo esc_html($user_auth_data->data->phone); ?>" required>
+            </p>
+            <p>
+                <label>Password:</label><br>
+                <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_password">
+            </p>
+            <p>
+                <label>Token:</label><br>
+                <textarea rows="8" style="width: 50%; padding: 2px 10px;" name="laravel_token">
+                    <?php echo esc_html($user_auth_data->data->api_token); ?>
+                </textarea>
+            </p>
+            <p>
+                <button type="submit" name="update_token" class="button button-primary">Update Token</button>
+            </p>
        <?php
-
-            }
+            } else {
         ?>
             <p>
                 <label>Name:</label><br>
@@ -186,6 +219,7 @@ function render_api_authentication_page () {
             <p>
                 <button type="submit" name="generate_token" class="button button-primary">Generate Token</button>
             </p>
+        <?php } ?>    
         </form>
     </div>
     <?php
