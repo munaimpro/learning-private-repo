@@ -79,6 +79,46 @@ class UserController extends Controller
         }
     }
 
+    // Function to handle update token process
+    public function userUpdateToken (Request $request, $id) {
+        try {
+            $user = User::findOrFail($id);
+            
+            // Backend validation process
+            $validatedData = $request->validate([
+                'name'  => 'required|string|max:255',
+                'email' => 'required|email|max:100',
+                'phone' => 'required|string|max:50',
+            ]);
+
+            /**
+             * Create a new token
+             */
+            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone'], $user->password);
+
+            // Attach token to the input data array
+            $validatedData['api_token'] = $token;
+
+            // Data update process
+            $user->update($validatedData);
+
+            // Return response for the frontend
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Token updated success',
+                'api_token' => $token
+            ]);
+        
+        }   catch(Exception $error) {
+            /* If an unexpected exception occurs, return a JSON response indicating failure */
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'দুঃখিত! দয়া করে আবার চেষ্টা করুন। অথবা সাপোর্টে যোগাযোগ করুন'. $error->getMessage(),
+                'exception_error' => $error->getMessage()
+            ]);
+        }
+    }
+
     /**
      * Function to handle user signin process.
      *

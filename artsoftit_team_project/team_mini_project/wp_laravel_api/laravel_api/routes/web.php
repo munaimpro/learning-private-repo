@@ -23,6 +23,7 @@ Route::delete('user/delete/{id}', [UserController::class, 'deleteSingleUser'])->
 // Auth Routes
 Route::post('user/generate_token', [UserController::class, 'userGenerateToken']); // REGISTER API: http://127.0.0.1:8000/user/generate_token
 Route::get('user/get_auth_data/{token}', [UserController::class, 'userGetAuthDataWithToken']); // LOGIN API: http://127.0.0.1:8000/user/get_auth_data/token
+Route::post('user/update_token/{id}', [UserController::class, 'userUpdateToken']); // TOKEN UPDATE API: http://127.0.0.1:8000/user/update_token/id
 
 // Page Routes
 Route::view('/signin', 'signin');

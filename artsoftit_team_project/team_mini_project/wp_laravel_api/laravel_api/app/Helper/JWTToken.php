@@ -18,6 +18,7 @@ class JWTToken{
         $payload = [
             'iss' => 'laravel',
             'iat' => time(),
+            'exp' => time() + 60,
             /**
             * User email and user id passed to token to find after token decode 
             */

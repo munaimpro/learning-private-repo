@@ -136,6 +136,41 @@ function render_api_authentication_page () {
         }
     }
 
+    // Functionality to update api token by API request
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_token'])) {
+        // Get api token
+        $api_token = get_option('laravel_api_token');
+
+        $user_id = intval($_POST['laravel_user_id']); // Getting user id
+
+        // Getting updated data
+        $updated_data = [
+            'name' => sanitize_text_field($_POST['laravel_name']),
+            'email' => sanitize_email($_POST['laravel_email']),
+            'phone' => sanitize_text_field($_POST['laravel_phone'])
+        ];
+
+        // Laravel API call
+        $response = wp_remote_post('http://127.0.0.1:8000/user/update_token/'.$user_id, [
+            'method' => 'POST',
+            'body' => $updated_data,
+        ]);
+
+        // Error check
+        if (!is_wp_error($response)) {
+                $body = wp_remote_retrieve_body($response);
+                $data = json_decode($body, true);
+
+                if (isset($data['api_token'])) {
+                    update_option('laravel_api_token', $data['api_token']);
+                    echo '<div class="notice notice-success"><p>Token Saved Successfully!</p></div>';
+                } else {
+                    echo '<div class="notice notice-error"><p>Login failed</p></div>';
+                }
+
+            }
+    }
+
     // Render new generate token form
     ?>
     <div class="wrap">
@@ -156,7 +191,7 @@ function render_api_authentication_page () {
             
             // Check if token existing or not in the wp_options table
             if ($exist_token && !empty($user_auth_data)) {
-                // print_r($user_auth_data);
+                print_r($user_auth_data);
        ?>
             <?php if ($user_auth_data->token_status !== 'Unauthorized') { ?>
                 <div class="notice notice-success">
@@ -167,7 +202,8 @@ function render_api_authentication_page () {
                     <p>Token Expired</p>
                 </div>
             <?php } ?>
-
+            
+            <input type="hidden" name="laravel_user_id" value="<?php echo esc_html($user_auth_data->data->id); ?>">
             <p>
                 <label>Name:</label><br>
                 <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_name" value="<?php echo esc_html($user_auth_data->data->name); ?>" required>
@@ -179,10 +215,6 @@ function render_api_authentication_page () {
             <p>
                 <label>Phone:</label><br>
                 <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_phone" value="<?php echo esc_html($user_auth_data->data->phone); ?>" required>
-            </p>
-            <p>
-                <label>Password:</label><br>
-                <input style="width: 50%; padding: 2px 10px;" type="text" name="laravel_password">
             </p>
             <p>
                 <label>Token:</label><br>
@@ -460,7 +492,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['insertUser'])) {
         }
     }
 }
-
 
 
 
