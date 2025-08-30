@@ -48,12 +48,12 @@ function register_admin_api_user_page () {
 
 // Function to get Laravel API all users
 function get_laravel_api_users (): mixed {
-    // Get singin token
-    $signin_token = get_option('laravel_api_signin_token');
+    // Get api token
+    $api_token = get_option('laravel_api_token');
 
     $response = wp_remote_get('http://127.0.0.1:8000/users/get', [
         'headers' => [
-              'Authorization'  => 'Bearer ' . $signin_token,
+              'Authorization'  => 'Bearer ' . $api_token,
               'Accept' => 'application/json'
         ]
     ]);
@@ -76,11 +76,11 @@ function get_laravel_api_users (): mixed {
 // Function to get single Laravel API single user
 function get_laravel_api_single_user ($user_id) {
     // Get singin token
-    $signin_token = get_option('laravel_api_signin_token');
+    $api_token = get_option('laravel_api_token');
 
     $response = wp_remote_get('http://127.0.0.1:8000/user/get/'.$user_id, [
         'headers' => [
-            'Authorization' => 'Bearer ' . $signin_token,
+            'Authorization' => 'Bearer ' . $api_token,
             'Accept' => 'application/json'
         ]
     ]);
@@ -126,8 +126,8 @@ function render_api_authentication_page () {
             $body = wp_remote_retrieve_body($response);
             $data = json_decode($body, true);
 
-            if (isset($data['signin_token'])) {
-                update_option('laravel_api_token', $data['signin_token']);
+            if (isset($data['api_token'])) {
+                update_option('laravel_api_token', $data['api_token']);
                 echo '<div class="notice notice-success"><p>Token Saved Successfully!</p></div>';
             } else {
                 echo '<div class="notice notice-error"><p>Login failed</p></div>';
@@ -136,11 +136,33 @@ function render_api_authentication_page () {
         }
     }
 
-    // Render signin form
+    // Render new generate token form
     ?>
     <div class="wrap">
         <h1>Laravel API Autentication Information</h1>
         <form action="" method="POST">
+        <?php
+            global $wpdb;
+            $option_table = $wpdb->prefix . 'options';
+
+            $exist_token = $wpdb->get_results("SELECT * FROM $option_table WHERE option_name = 'laravel_api_token' LIMIT 1", ARRAY_A );
+            
+            // Check if token existing or not in the wp_options table
+            if ($exist_token) {
+                $api_token = $exist_token[0]['option_value']; // Store Api token
+                
+                // Fetch user data from laravel api matching the API token
+                $response = wp_remote_get('http://127.0.0.1:8000/user/get_auth_data/' . $api_token);
+                $body = wp_remote_retrieve_body($response);
+                $data = json_decode($body);
+       ?>
+       
+                
+
+       <?php
+
+            }
+        ?>
             <p>
                 <label>Name:</label><br>
                 <input style="width: 50%; padding: 2px;" type="text" name="laravel_name" required>
@@ -292,7 +314,7 @@ function render_admin_page (): void {
 // Functionality to update user details by API request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
     // Get signin token
-    $signin_token = get_option('laravel_api_signin_token');
+    $api_token = get_option('laravel_api_token');
 
     $user_id = intval($_POST['id']); // Getting user id
 
@@ -312,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
     $response = wp_remote_post('http://127.0.0.1:8000/user/put/'.$user_id, [
         'body'    => $updated_data,
         'headers' => [
-            'Authorization' => 'Bearer ' . $signin_token,
+            'Authorization' => 'Bearer ' . $api_token,
         ]
     ]);
 
@@ -339,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateUser'])) {
 // Functionality to delete API user
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
     // Get singin token
-    $signin_token = get_option('laravel_api_signin_token');
+    $api_token = get_option('laravel_api_token');
 
     $delet_user_id = intval($_GET['id']);
 
@@ -347,7 +369,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     $response = wp_remote_request('http://127.0.0.1:8000/user/delete/'.$delet_user_id, [
         'method' => 'DELETE',
         'headers' => [
-            'Authorization' => 'Bearer ' . $signin_token,
+            'Authorization' => 'Bearer ' . $api_token,
             'Accept' => 'application/json'
         ]
     ]);
@@ -370,7 +392,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 // Functionality to add user by API request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['insertUser'])) {
     // Get singin token
-    $signin_token = get_option('laravel_api_signin_token');
+    $api_token = get_option('laravel_api_token');
 
     // Getting insert data
     $insert_data = [
@@ -388,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['insertUser'])) {
     $response = wp_remote_post('http://127.0.0.1:8000/user/post/', [
         'body' => $insert_data,
         'headers' => [
-            'Authorization' => 'Bearer ' . $signin_token,
+            'Authorization' => 'Bearer ' . $api_token,
         ]
     ]);
 

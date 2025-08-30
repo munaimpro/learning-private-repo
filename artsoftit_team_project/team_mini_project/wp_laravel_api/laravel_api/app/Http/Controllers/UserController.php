@@ -60,7 +60,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'New token generated',
-                'signin_token' => $token
+                'api_token' => $token
             ]);
         } catch (ValidationException $error) {
             return response()->json([

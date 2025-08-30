@@ -18,19 +18,20 @@ class TokenVerificationMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next) {   
-        $signin_token = $request->cookie('signin_token');
+        // $signin_token = $request->cookie('signin_token');
 
         // If signin_token not present in cookie
-        if (!$signin_token && $request->hasHeader('Authorization')) {
+        if ($request->hasHeader('Authorization')) {
             $authHeader = $request->header('Authorization');
+            logger()->info("Authorization Header: ".$authHeader); // DEBUG
             if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-                $signin_token = $matches[1];
+                $api_token = $matches[1];
             }
         }
 
-        // Try to verify signin_token
-        if ($signin_token) {
-            $result = JWTToken::VerifyToken($signin_token);
+        // Try to verify api_token
+        if ($api_token) {
+            $result = JWTToken::VerifyToken($api_token);
 
             if ($result !== "Unauthorized") {
                 // Set headers for later use
@@ -41,8 +42,12 @@ class TokenVerificationMiddleware
 
                 return $next($request);
             } else {
-                return redirect('signin');
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => 'Unauthorized - Invalid or expired token.'
+                ]);
             }
         }
     }
 }
+     
