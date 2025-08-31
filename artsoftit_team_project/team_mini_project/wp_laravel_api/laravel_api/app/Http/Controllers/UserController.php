@@ -30,7 +30,7 @@ class UserController extends Controller
             /**
              * Create a new token
              */
-            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone'], $validatedData['password']);
+            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone']);
 
             // Attach token to the input data array
             $validatedData['api_token'] = $token;
@@ -94,7 +94,7 @@ class UserController extends Controller
             /**
              * Create a new token
              */
-            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone'], $user->password);
+            $token = JWTToken::CreateToken($validatedData['name'], $validatedData['email'], $validatedData['phone']);
 
             // Attach token to the input data array
             $validatedData['api_token'] = $token;

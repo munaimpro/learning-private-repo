@@ -162,6 +162,19 @@ function render_api_authentication_page () {
                 $data = json_decode($body, true);
 
                 if (isset($data['api_token'])) {
+                    // global $wpdb;
+                    // $option_table = $wpdb->prefix . 'options';
+                    // $exist_token = $wpdb->get_results("SELECT * FROM $option_table WHERE option_name = 'laravel_api_token' LIMIT 1", ARRAY_A );
+                    // $api_token = $exist_token[0]['option_value'];
+                    // echo $data['api_token'] . '</br></br>';
+                    // echo $api_token;
+                    // if ($data['api_token'] == $api_token) {
+                    //     echo "Same";
+                    // } else {
+                    //     echo "Different";
+                    // }
+
+
                     update_option('laravel_api_token', $data['api_token']);
                     echo '<div class="notice notice-success"><p>Token Saved Successfully!</p></div>';
                 } else {
@@ -191,7 +204,7 @@ function render_api_authentication_page () {
             
             // Check if token existing or not in the wp_options table
             if ($exist_token && !empty($user_auth_data)) {
-                print_r($user_auth_data);
+                // print_r($user_auth_data);
        ?>
             <?php if ($user_auth_data->token_status !== 'Unauthorized') { ?>
                 <div class="notice notice-success">
