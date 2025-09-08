@@ -73,7 +73,7 @@ function get_laravel_api_users (): mixed {
 }
 
 
-// Function to get single Laravel API single user
+// Function to get Laravel API single user
 function get_laravel_api_single_user ($user_id) {
     // Get singin token
     $api_token = get_option('laravel_api_token');
