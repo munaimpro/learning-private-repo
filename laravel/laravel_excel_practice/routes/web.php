@@ -8,3 +8,6 @@ Route::get('/', function () {
 });
 
 Route::post('upload-excel-data', [CustomerController::class, 'uploadExcelData']);
+Route::view('customer-list', 'customer_list');
+Route::get('get-excel-data', [CustomerController::class,'getExcelData']);
+Route::get('generate-pdf', [CustomerController::class, 'generatePdf']);

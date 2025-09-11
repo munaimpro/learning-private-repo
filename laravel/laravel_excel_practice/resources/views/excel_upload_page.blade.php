@@ -20,7 +20,10 @@
                             <input type="file" id="file">
                             <button class="btn btn-primary" id="uploadButton" onclick="uploadExcelData(event)">Upload</button>
                         </form>
-                        <h1 class="upload-message d-none">Uploading excel</h1>
+                        <h1 class="upload-message d-none">Generating report</h1>
+                    </div>
+                    <div class="card-footer">
+                        <h6><a href="{{ url('/pdf-report') }}">Download PDF Report</a></h6>
                     </div>
                 </div>
             </div>
